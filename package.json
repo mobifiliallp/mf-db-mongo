@@ -1,0 +1,46 @@
+{
+  "name": "mf-db-mongo",
+  "version": "1.0.0",
+  "description": "Mobifilia Common - Mongo DB Wrapper",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "author": "Gopal Raichur",
+  "license": "ISC",
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "private": true,
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.7.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "airbnb"
+    ],
+    "rules": {
+      "no-underscore-dangle": "off",
+      "max-len": "off",
+      "object-shorthand": "off",
+      "prefer-destructuring": "off",
+      "no-param-reassign": "off",
+      "no-else-return": "off",
+      "no-prototype-builtins": "off",
+      "no-mixed-operators": [
+        "error",
+        {
+          "allowSamePrecedence": true
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "mf-logwrapper": "git+ssh://git-user@git.chavdi.com:/srv/git/mf/mf-logwrapper.git#semver:^v1.0.0",
+    "mongodb": "^3.0.10"
+  }
+}
