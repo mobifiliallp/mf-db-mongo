@@ -47,6 +47,8 @@ function attachEventHanders(db) {
  */
 function initialize(url, options) {
   logger.traceF('initialize');
+  // To prevent deprecation warning
+  options.useNewUrlParser = true;
   return new Promise((resolve, reject) => {
     MongoClient.connect(url, options)
       .then((mongoClient) => {
