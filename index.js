@@ -17,15 +17,35 @@
  * Call the initialize method somewhere in your startup code.
  * e.g. initialize(mongodb.url, mongodb.options)
  */
+const config = require('config');
+const _ = require('lodash');
 const MongoClient = require('mongodb').MongoClient;
+const ObjectID = require('mongodb').ObjectID;
 const logWrapper = require('mf-logwrapper');
 
 const logger = logWrapper.getContextLogger('mf-db', 'mongo');
 
 const _locals = {
+  initializer: undefined,
   mongoClient: undefined,
   db: undefined,
 };
+
+let mongoConfig = {
+  url: 'mongodb://localhost:27017',
+  options: {
+    auth: {
+      user: 'anonymous',
+      password: 'nopassword',
+    },
+    useNewUrlParser: true,
+  },
+};
+
+if (config.has('mongodb')) {
+  const appMongoConfig = config.get('mongodb');
+  mongoConfig = _.mergeWith(mongoConfig, appMongoConfig);
+}
 
 function attachEventHanders(db) {
   db.on('error', (error) => {
@@ -42,14 +62,24 @@ function attachEventHanders(db) {
 /**
  * Connects to the database with the given parameters.
  *
- * @param {String} url The db connection URI string.
- * @param {Object} options Optional settings.
+ * @param {String} [url] The db connection URI string.
+ * @param {Object} [options] Optional settings.
  */
 function initialize(url, options) {
   logger.traceF('initialize');
-  // To prevent deprecation warning
-  options.useNewUrlParser = true;
-  return new Promise((resolve, reject) => {
+  if (url === undefined) {
+    url = mongoConfig.url;
+  }
+  if (options === undefined) {
+    options = mongoConfig.options;
+  }
+
+  // check if we have already been initialized
+  if (_locals.initializer !== undefined) {
+    return _locals.initializer;
+  }
+
+  _locals.initializer = new Promise((resolve, reject) => {
     MongoClient.connect(url, options)
       .then((mongoClient) => {
         _locals.mongoClient = mongoClient;
@@ -61,6 +91,8 @@ function initialize(url, options) {
         reject(e);
       });
   });
+
+  return _locals.initializer;
 }
 module.exports.initialize = initialize;
 
@@ -95,3 +127,5 @@ function getCollection(collectionName) {
   });
 }
 module.exports.getCollection = getCollection;
+
+module.exports.ObjectID = ObjectID;
