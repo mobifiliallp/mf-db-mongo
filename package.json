@@ -1,30 +1,34 @@
 {
   "name": "mf-db-mongo",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Mobifilia Common - Mongo DB Wrapper",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint ."
+    "lint": "standard",
+    "lint:fix": "standard --fix"
   },
   "author": "Gopal Raichur",
   "license": "ISC",
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=10.0.0"
   },
   "private": true,
   "dependencies": {
     "config": "^1.31.0",
-    "lodash": "^4.17.10",
-    "mf-logwrapper": "git+https://github.com/mobifiliallp/mf-logwrapper.git#semver:^1.0.0",
-    "mongodb": "^3.0.10"
+    "lodash": "^4.17.15",
+    "mf-logger": "github:mobifiliallp/mf-logger",
+    "mongodb": "^3.3.3"
   },
   "devDependencies": {
-    "eslint-config-mfnode": "git+https://github.com/mobifiliallp/eslint-config-mfnode.git#semver:^1.0.0",
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.14.0"
+    "husky": "^4.2.3",
+    "standard": "^14.3.3"
   },
-  "eslintConfig": {
-    "extends": "eslint-config-mfnode"
+  "husky": {
+    "hooks": {
+      "pre-commit": "./pre-commit.standard.sh"
+    }
+  },
+  "standard": {
+    "ignore": "tests/**/*.*"
   }
 }
