@@ -5,9 +5,11 @@ Simple wrapper over official nodejs Mongodb driver.
 Also logs basic db events.
 
 ## Configuration
-  The module reads the configuration of the app if available. Sample configuration
+  The module reads the configuration of the app if available. The default configuration key read is `mf-db-mongo`.
+  
+  Sample configuration
   ```JSON
-    "mongodb": {
+    "mf-db-mongo": {
       "url": "mongodb://localhost:27017",
       "options": {
         "auth": {

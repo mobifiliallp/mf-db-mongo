@@ -5,7 +5,7 @@
  * Logs basic db events.
  *
  * Configuration -
- *   "mongodb": {
+ *   "mf-db-mongo": {
  *     "url": "mongodb://localhost:27017",
  *     "options": {
  *       "auth": {
@@ -27,8 +27,11 @@ const logger = MfLogger.getContextLogger('mf-db', 'mongo')
 const MongoClient = mongodb.MongoClient
 
 const locals = {
+  /** @type {Promise<mongodb.Db>} */
   initializer: undefined,
+  /** @type {MongoClient} */
   mongoClient: undefined,
+  /** @type {mongodb.Db} */
   db: undefined
 }
 
@@ -48,8 +51,15 @@ const defaultMongoConnectOptions = {
 if (config.has('mongodb')) {
   const appMongoConfig = config.get('mongodb')
   mongoConfig = lodash.mergeWith(mongoConfig, appMongoConfig)
+} else if (config.has('mf-db-mongo')) {
+  const appMongoConfig = config.get('mf-db-mongo')
+  mongoConfig = lodash.mergeWith(mongoConfig, appMongoConfig)
 }
 
+/**
+ * Attach event handlers to the given database instance.
+ * @param {mongodb.Db} db Mongo database
+ */
 function attachEventHanders (db) {
   logger.traceF('attachEventHanders')
   db.on('close', () => {
@@ -83,6 +93,8 @@ function attachEventHanders (db) {
  *
  * @param {String} [url] The db connection URI string.
  * @param {Object} [options] Optional settings.
+ *
+ * @returns {Promise<mongodb.Db>}
  */
 function initialize (url, options) {
   logger.traceF('initialize')
@@ -123,10 +135,18 @@ function initialize (url, options) {
 }
 module.exports.initialize = initialize
 
+/**
+ * Shutdown / close the database connection.
+ * @param {boolean} force Force shutdown/close
+ *
+ * @returns {Promise}
+ */
 function shutdown (force = false) {
   const client = getMongoClient()
   if (client) {
-    client.close(force)
+    return client.close(force)
+  } else {
+    return Promise.resolve()
   }
 }
 module.exports.shutdown = shutdown
@@ -174,10 +194,11 @@ module.exports.getDb = getDb
  * Gets a mongo collection by name.
  *
  * @param {String} collectionName The collection name.
+ *
+ * @returns {Promise<mongodb.Collection>}
  */
 function getCollection (collectionName) {
-  // logger.traceF('getCollection', { collectionName });
-  logger.traceF('getCollection', { connected: locals.mongoClient.isConnected() })
+  logger.traceF('getCollection', { collectionName, connected: locals.mongoClient.isConnected() })
   return new Promise((resolve, reject) => {
     if (locals.db !== undefined) {
       resolve(locals.db.collection(collectionName))
@@ -193,6 +214,7 @@ module.exports.getCollection = getCollection
  * Makes a mongo ObjectID from the given parameter.
  * @param {string|mongodb.ObjectID} stringOrObjectId A string ID or a mongo ObjectID.
  * @returns {mongodb.ObjectID}
+ * @throws {Error} E_INVALID_PARAMETER_FOR_OBJECTID - if the parameter is in an invalid format.
  */
 function getObjectId (stringOrObjectId) {
   if (lodash.isString(stringOrObjectId)) {
@@ -205,6 +227,12 @@ function getObjectId (stringOrObjectId) {
 }
 module.exports.getObjectId = getObjectId
 
+/**
+ * Gets a (hex) string representation of the given mongo ObjectID.
+ * @param {string|mongodb.ObjectID} stringOrObjectId A string ID or a mongo ObjectID.
+ * @returns {string}
+ * @throws {Error} E_INVALID_OBJECTID - if the parameter is not a valid Mongo ObjectID.
+ */
 function getIdString (stringOrObjectId) {
   if (mongodb.ObjectID.isValid(stringOrObjectId)) {
     if (lodash.isString(stringOrObjectId)) {
