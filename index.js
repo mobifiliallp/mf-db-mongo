@@ -43,7 +43,8 @@ let mongoConfig = {
 
 const defaultMongoConnectOptions = {
   useNewUrlParser: true,
-  bufferMaxEntries: 0
+  bufferMaxEntries: 0,
+  useUnifiedTopology: true
   // reconnectInterval: 10000,
   // reconnectTries: 5,
 }
@@ -123,7 +124,6 @@ function initialize (url, options) {
         attachEventHanders(locals.db)
         resolve(locals.db)
         locals.connecting = false
-        logger.debug('topology', locals.db.topology)
       }).catch((e) => {
         logger.error(e)
         locals.connecting = false

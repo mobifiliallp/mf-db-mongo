@@ -1,6 +1,6 @@
 {
   "name": "mf-db-mongo",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Mobifilia Common - Mongo DB Wrapper",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,7 @@
     "config": "^1.31.0",
     "lodash": "^4.17.15",
     "mf-logger": "github:mobifiliallp/mf-logger",
-    "mongodb": "^3.3.3"
+    "mongodb": "^3.5.5"
   },
   "devDependencies": {
     "husky": "^4.2.3",
