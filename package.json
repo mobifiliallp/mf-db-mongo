@@ -14,7 +14,7 @@
   },
   "private": true,
   "dependencies": {
-    "config": "^1.31.0",
+    "config": "^3.3.8",
     "lodash": "^4.17.15",
     "mf-logger": "github:mobifiliallp/mf-logger",
     "mongodb": "^3.5.5"
